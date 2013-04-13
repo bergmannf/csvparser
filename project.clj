@@ -4,6 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [local.oracle/javafxrt "2.2.7"]]
-  :main csvparser.ui
-  :aot [csvparser.ui])
+                 [seesaw "1.4.3"]
+                 [com.github.insubstantial/substance "7.2.1"]
+                 [clojure-csv/clojure-csv "2.0.0-alpha1"]]
+  :main csvparser.swingui)

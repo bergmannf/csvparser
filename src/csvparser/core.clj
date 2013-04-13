@@ -1,5 +1,6 @@
 (ns csvparser.core
   (gen-class))
+(use 'clojure-csv)
 
 (defn -main
   "I don't do a whole lot ... yet."
