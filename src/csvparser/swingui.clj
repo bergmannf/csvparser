@@ -31,7 +31,7 @@
 
 (defn process-data [source target]
   (println "Working on " @chosen-source-file simple-process)
-  (println (process-file @chosen-source-file simple-process)))
+  (process-file @chosen-source-file simple-process))
 
 (defn -main [& args]
   (SubstanceLookAndFeel/setSkin

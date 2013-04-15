@@ -9,9 +9,9 @@
 
 (defn process-file [file-path actions]
   "Will apply the specified actions to the file"
-  (with-open [rdr (reader file-path)]
+  (with-open [rdr (reader file-path :encoding "iso-8859-1")]
     (doseq [line (line-seq rdr)]
-      (println (apply-all-funcs actions line)))))
+      (apply-all-funcs actions line))))
 
 (defn insert-data-at-end [word line]
   "Append a value at the end of the line"
@@ -25,7 +25,7 @@
 (defn insert-gegenkonto [line]
   "Appends the correct account if encountered"
   (insert-data-at-end-cond (fn gebuehren? [l]
-                             (.contains l "Verkaufsgebühren"))
+                             (.contains l "Verkaufsgebühr"))
                              "497100" "1004035" line))
 
 (defn insert-konto [line]
