@@ -39,3 +39,6 @@
 (defn insert-konto [line]
   "Appends the 'account' ??"
   (partial insert-data-at-end "136500"))
+
+;; All changes that should be applied to the file in order.
+(def simple-process [insert-konto insert-gegenkonto])

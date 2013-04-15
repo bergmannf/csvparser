@@ -7,4 +7,4 @@
                  [seesaw "1.4.3"]
                  [com.github.insubstantial/substance "7.2.1"]
                  [clojure-csv/clojure-csv "2.0.0-alpha2"]]
-  :main csvparser.core)
+  :main csvparser.swingui)
