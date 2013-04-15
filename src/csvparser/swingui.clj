@@ -2,15 +2,36 @@
   (:gen-class)
   (:use seesaw.core)
   (:use seesaw.chooser)
+  (:use csvparser.core)
+  (:require [seesaw.bind :as b])
   (:import org.pushingpixels.substance.api.SubstanceLookAndFeel
-           javax.swing.UIManager))
+           javax.swing.UIManager
+           java.io.File))
 
-(def chosen-source-file "")
+(def source-txt (text :text "<quelle>" :enabled? false))
 
-(def chosen-target-file "")
+(def target-txt (text :text "<ziel>" :enabled? true))
+
+(def chosen-source-file (atom nil))
+
+(def chosen-target-file (atom nil))
+
+(defn update-txt [field text]
+  (config! field :text text))
 
 (defn choose-source-file [e]
-  (set chosen-source-file (.toString (choose-file))))
+  (reset! chosen-source-file (choose-file))
+  (reset! chosen-target-file (str (.toString @chosen-source-file) ".new"))
+  (update-txt source-txt (.toString @chosen-source-file))
+  (update-txt target-txt (.toString @chosen-target-file)))
+
+(defn choose-target-file [e]
+  (reset! chosen-target-file (choose-file))
+  (update-txt target-txt (.toString @chosen-target-file)))
+
+(defn process-data [source target]
+  (println "Working on " @chosen-source-file simple-process)
+  (println (process-file @chosen-source-file simple-process)))
 
 (defn -main [& args]
   (SubstanceLookAndFeel/setSkin
@@ -24,12 +45,17 @@
                                  (menu :text "Help" :items [])])
               :content (vertical-panel
                         :items [(horizontal-panel :items
-                                 [(text :text "<quelle>")
-                                 (button :text "Quelle Waehlen"
-                                         :listen [:action choose-source-file])])
+                                                  [source-txt
+                                                   (button :text "Quelle Waehlen"
+                                                           :listen [:action choose-source-file])])
                                 (horizontal-panel :items
-                                 [(text :text "<ziel>")
-                                 (button :text "Ziel Waehlen")])
-                                ]))
+                                                  [target-txt
+                                                   (button :text "Ziel Waehlen")])
+                                (horizontal-panel :items
+                                                  [(button :text "Abbrechen"
+                                                           :listen [:action (fn [x] (System/exit 0))])
+                                                   (button :text "Weiter"
+                                                           :listen [:action
+                                                                    (fn [x] (process-data @chosen-source-file @chosen-target-file))])])]))
        pack!
        show!)))
