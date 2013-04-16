@@ -9,13 +9,18 @@
 
 (defn process-file [file-path actions]
   "Will apply the specified actions to the file"
-  (with-open [rdr (reader file-path :encoding "iso-8859-1")]
-    (doseq [line (line-seq rdr)]
-      (apply-all-funcs actions line))))
+  (map (partial apply-all-funcs actions)
+       (with-open [rdr (reader file-path :encoding "iso-8859-1")]
+         (doall (line-seq rdr)))))
+
+(defn write-data-to-file [file-path data]
+  (with-open [wrtr (writer file-path :encoding "iso-8859-1")]
+    (doseq [line data]
+      (.write wrtr (str line (System/lineSeparator))))))
 
 (defn insert-data-at-end [word line]
   "Append a value at the end of the line"
-  (str line ", " word))
+  (str line \tab word))
 
 (defn insert-data-at-end-cond [cond-fn match-word no-match-word line]
   "Append a value at the end of the line when cond is trueefor the line."
@@ -26,7 +31,7 @@
   "Appends the correct account if encountered"
   (insert-data-at-end-cond (fn gebuehren? [l]
                              (.contains l "Verkaufsgebühr"))
-                             "497100" "1004035" line))
+                           "497100" "1004035" line))
 
 (defn insert-konto [line]
   "Appends the 'account' ??"

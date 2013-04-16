@@ -31,7 +31,20 @@
 
 (defn process-data [source target]
   (println "Working on " @chosen-source-file simple-process)
-  (process-file @chosen-source-file simple-process))
+  (let [data (process-file @chosen-source-file simple-process)]
+    (write-data-to-file @chosen-target-file data)))
+
+(def source-button (button :text "Quelle Waehlen"
+                           :listen [:action choose-source-file]))
+
+(def target-button (button :text "Ziel Waehlen"))
+
+(def cancel-button (button :text "Abbrechen"
+                           :listen [:action (fn [x] (System/exit 0))]))
+
+(def ok-button (button :text "Weiter"
+                       :listen [:action
+                                (fn [x] (process-data @chosen-source-file @chosen-target-file))]))
 
 (defn -main [& args]
   (SubstanceLookAndFeel/setSkin
@@ -46,16 +59,12 @@
               :content (vertical-panel
                         :items [(horizontal-panel :items
                                                   [source-txt
-                                                   (button :text "Quelle Waehlen"
-                                                           :listen [:action choose-source-file])])
+                                                   source-button])
                                 (horizontal-panel :items
                                                   [target-txt
-                                                   (button :text "Ziel Waehlen")])
+                                                   target-button])
                                 (horizontal-panel :items
-                                                  [(button :text "Abbrechen"
-                                                           :listen [:action (fn [x] (System/exit 0))])
-                                                   (button :text "Weiter"
-                                                           :listen [:action
-                                                                    (fn [x] (process-data @chosen-source-file @chosen-target-file))])])]))
+                                                  [cancel-button
+                                                   ok-button])]))
        pack!
        show!)))
