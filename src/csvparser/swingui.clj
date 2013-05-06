@@ -3,10 +3,12 @@
   (:use seesaw.core)
   (:use seesaw.chooser)
   (:use csvparser.core)
+  (:use seesaw.mig)
   (:require [seesaw.bind :as b])
   (:import org.pushingpixels.substance.api.SubstanceLookAndFeel
            javax.swing.UIManager
-           java.io.File))
+           java.io.File
+           java.nio.charset.Charset))
 
 (def source-txt (text :text "<quelle>" :enabled? false))
 
@@ -21,7 +23,7 @@
 
 (defn choose-source-file [e]
   (reset! chosen-source-file (choose-file))
-  (reset! chosen-target-file (str (.toString @chosen-source-file) ".new"))
+  (reset! chosen-target-file (str (.toString @chosen-source-file) ".new.txt"))
   (update-txt source-txt (.toString @chosen-source-file))
   (update-txt target-txt (.toString @chosen-target-file)))
 
@@ -46,6 +48,13 @@
                        :listen [:action
                                 (fn [x] (process-data @chosen-source-file @chosen-target-file))]))
 
+(def all-encodings (java.nio.charset.Charset/availableCharsets))
+
+(def utf-8-enc (first (filter #(.contains (.toString %1) "UTF-8") all-encodings)))
+
+(def encodings-combobox
+  (selection! (combobox :model (vec all-encodings)) utf-8-enc))
+
 (defn -main [& args]
   (SubstanceLookAndFeel/setSkin
    "org.pushingpixels.substance.api.skin.BusinessBlueSteelSkin")
@@ -56,15 +65,10 @@
               :menubar (menubar :items
                                 [(menu :text "File" :items [])
                                  (menu :text "Help" :items [])])
-              :content (vertical-panel
-                        :items [(horizontal-panel :items
-                                                  [source-txt
-                                                   source-button])
-                                (horizontal-panel :items
-                                                  [target-txt
-                                                   target-button])
-                                (horizontal-panel :items
-                                                  [cancel-button
-                                                   ok-button])]))
+              :content (mig-panel
+                        :constraints ["wrap 3" "[grow][][]" ""]
+                        :items [[source-txt "growx"] [source-button "grow"] [encodings-combobox ""]
+                                [target-txt "growx"] [target-button "grow, wrap"]
+                                [cancel-button ""] [ok-button ""]]))
        pack!
        show!)))

@@ -7,10 +7,10 @@
   (if (empty? funcs) line
       (recur (rest funcs) ((first funcs) line))))
 
-(defn process-file [file-path actions]
+(defn process-file [file-path actions & encoding]
   "Will apply the specified actions to the file"
   (map (partial apply-all-funcs actions)
-       (with-open [rdr (reader file-path :encoding "iso-8859-1")]
+       (with-open [rdr (reader file-path :encoding "utf-8")]
          (doall (line-seq rdr)))))
 
 (defn write-data-to-file [file-path data]
