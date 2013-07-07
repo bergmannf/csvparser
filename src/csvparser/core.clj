@@ -18,24 +18,25 @@
     (doseq [line data]
       (.write wrtr (str line (System/lineSeparator))))))
 
-(defn insert-data-at-end [word line]
+(defn insert-data-at-end [word sep line]
   "Append a value at the end of the line"
-  (str line \tab word))
+  (str line sep word))
 
-(defn insert-data-at-end-cond [cond-fn match-word no-match-word line]
+(defn insert-data-at-end-cond [cond-fn match-word no-match-word sep line]
   "Append a value at the end of the line when cond is trueefor the line."
-  (if (cond-fn line) (insert-data-at-end match-word line)
-      (insert-data-at-end no-match-word line)))
+  (if (cond-fn line) (insert-data-at-end match-word sep line)
+      (insert-data-at-end no-match-word sep line)))
 
-(defn insert-gegenkonto [line]
+(defn insert-gegenkonto [sep line]
   "Appends the correct account if encountered"
   (insert-data-at-end-cond (fn gebuehren? [l]
                              (.contains l "Verkaufsgebühr"))
-                           "497100" "1004035" line))
+                           "497100" "1004035" sep line))
 
-(defn insert-konto [line]
+(defn insert-konto [sep line]
   "Appends the 'account' ??"
-  (insert-data-at-end "136500" line))
+  (insert-data-at-end "136500" sep line))
 
 ;; All changes that should be applied to the file in order.
-(def simple-process [insert-konto insert-gegenkonto])
+(def simple-process [(partial insert-konto \tab)
+                     (partial insert-gegenkonto \tab)])
