@@ -3,7 +3,7 @@
 (use 'clojure.java.io)
 
 (defn header-to-index-map
-  "Returns a map of keywords to indices of the given csv-line"
+  "Returns a map of keywords to indices of the given csv-line."
   [header-row]
   (let [headers (map keyword (first (parse-csv header-row)))
         indices (range (count headers))

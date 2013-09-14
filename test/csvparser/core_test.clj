@@ -39,4 +39,5 @@
 (deftest access-csv-by-header
   (testing "We can access a row-element by specifying the row-header"
     (let [access-func (header-func-csv csv-with-header)]
-      (is (= (access-func :id) 0)))))
+      (is (= (access-func :id) 0))
+      (is (= (access-func :notpresent) nil)))))
