@@ -2,6 +2,21 @@
 (use 'clojure-csv.core)
 (use 'clojure.java.io)
 
+(defn header-to-index-map
+  "Returns a map of keywords to indices of the given csv-line"
+  [header-row]
+  (let [headers (map keyword (first (parse-csv header-row)))
+        indices (range (count headers))
+        keyword-to-index-map (zipmap headers indices)]
+    keyword-to-index-map))
+
+(defn header-func-csv
+  "Return a function that will return the corresponding index to a
+  passed column-header of a csv-file."
+  [header-row]
+  (let [mapping (header-to-index-map header-row)]
+    (fn [x] (mapping (keyword x)))))
+
 (defn process-file [file-path actions & encoding]
   "Will apply the specified actions to the file"
   (map (comp actions
