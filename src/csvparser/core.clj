@@ -15,7 +15,11 @@
   passed column-header of a csv-file."
   [header-row]
   (let [mapping (header-to-index-map header-row)]
-    (fn [x] (mapping (keyword x)))))
+    (fn
+      [x]
+      (cond (or (string? x) (keyword? x)) (mapping (keyword x))
+            (and (number? x) (< x (count mapping))) x
+            :else nil))))
 
 (defn process-file [file-path actions & encoding]
   "Will apply the specified actions to the file"

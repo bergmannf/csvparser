@@ -1,6 +1,7 @@
 (ns csvparser.core-test
-  (:use clojure.test
-        csvparser.core))
+  (:use [clojure.test]
+        [csvparser.core]
+        [clojure-csv.core]))
 
 (def csv-with-header (str "id,name,age"
                           \newline
@@ -36,8 +37,26 @@
           expected (str csv-row "	1004035	136500")]
       (is (= expected new-csv)))))
 
-(deftest access-csv-by-header
-  (testing "We can access a row-element by specifying the row-header"
+(deftest header-func-for-csv-maps-to-index
+  (testing "We can convert a header to the correct index using a
+  generated header-func"
     (let [access-func (header-func-csv csv-with-header)]
       (is (= (access-func :id) 0))
       (is (= (access-func :notpresent) nil)))))
+
+(deftest accessing-a-csv-column-by-header-func
+  (testing "We can access the csv by using the header-func and
+  a (correct) column-header"
+    (let [access-func (header-func-csv csv-with-header)
+          row (second (parse-csv csv-with-header))]
+      (is (= (row (access-func :id)) "1"))
+      (is (= (row (access-func :name)) "John Conner"))
+      (is (= (row (access-func :age)) "15")))))
+
+(deftest access-csv-by-index
+  (testing "The header function does not prevent use from using the index."
+    (let [access-func (header-func-csv csv-with-header)
+          row (second (parse-csv csv-with-header))]
+      (is (= (row (access-func 0)) "1"))
+      (is (= (row (access-func 1)) "John Conner"))
+      (is (= (row (access-func 2)) "15")))))
