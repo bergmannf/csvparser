@@ -54,9 +54,10 @@
       (is (= (row (access-func :age)) "15")))))
 
 (deftest access-csv-by-index
-  (testing "The header function does not prevent use from using the index."
+  (testing "The header function does not prevent the use of an index."
     (let [access-func (header-func-csv csv-with-header)
           row (second (parse-csv csv-with-header))]
       (is (= (row (access-func 0)) "1"))
       (is (= (row (access-func 1)) "John Conner"))
-      (is (= (row (access-func 2)) "15")))))
+      (is (= (row (access-func 2)) "15"))
+      (is (= (access-func 3) nil)))))
